@@ -1,0 +1,618 @@
+業務小寶，實話實說，這張截圖 我一看秒懂！不用緊張，這在網頁開發非常常見。
+
+這個畫面叫做「網頁被扒光衣服」。意思是它的「骨架」（HTML文字跟輸入框）有顯示出來，但是排版、顏色這些「衣服」（CSS 樣式）以及計算功能（JavaScript）沒有被正確讀取到。這通常是我們手動把三個框框拼湊在一起時，放錯了位置，或是漏掉了 `<style>` 標籤。
+
+我們不要那麼辛苦自己拼圖了！我直接幫你把 HTML、CSS、JavaScript **全部完美整合成「唯一一個」完整的檔案代碼**。
+
+### 🛠️ 10 秒鐘救援步驟：
+
+1. 用你電腦的「記事本」（或 Mac 的「文字編輯」），打開你剛剛建立的那個 `index.html` 檔案。
+2. **把裡面原本的東西「全部刪除」**。
+3. 把下面這個黑框框裡的程式碼（從最上面的 `<!DOCTYPE html>` 到最下面的 `</html>`），**一字不漏地全部複製，然後貼進去**。
+4. 儲存檔案！接著點兩下直接用瀏覽器打開，它就會瞬間恢復成那套完美對齊、燈泡會發光的頂級系統了！
+
+請直接全選複製以下這整組代碼：
+
+```html
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>黃金資產期與生命進度體檢系統</title>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500;700&display=swap');
+    body, html { margin: 0; padding: 0; font-family: 'Noto Sans TC', sans-serif; scroll-behavior: smooth; overflow-x: hidden; color: #333;}
+    * { box-sizing: border-box; }
+    .full-screen { min-height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; padding: 50px 20px;}
+    .bg-light { background-color: #f8f9fa; }
+    .container { max-width: 1200px; width: 100%; display: flex; gap: 40px; flex-wrap: wrap;}
+    .left-panel, .right-panel { flex: 1; min-width: 320px; display: flex; flex-direction: column; justify-content: center;}
+    .section-title { font-size: 2rem; color: #1a365d; border-bottom: 3px solid #3182ce; padding-bottom: 10px; margin-bottom: 25px;}
+
+    .input-grid { display: flex; flex-wrap: wrap; gap: 15px; }
+    .input-group { flex: 1; min-width: 140px; }
+    .full-width { flex: 100%; }
+    label { display: block; font-size: 0.9rem; color: #718096; margin-bottom: 5px; font-weight: bold;}
+    input { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1.1rem;}
+    .analysis-box { background: #fff; border-left: 5px solid #3182ce; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
+    .dark-box { border-left: none; color: #fff; }
+
+    .chart-container { width: 100%; height: 280px; max-width: 380px; margin: 0 auto 20px auto; position: relative; }
+    .health-bar-bg { width: 100%; height: 12px; background: #edf2f7; border-radius: 10px; overflow: hidden; }
+    .health-bar-fill { height: 100%; width: 0%; transition: width 0.8s ease; }
+
+    .balance-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; width: 100%; align-items: stretch; margin-bottom: 10px;}
+    .balance-card-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; }
+    .balanced-input-box { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); flex-grow: 1; display: flex; flex-direction: column; justify-content: center;}
+
+    .risk-grid { display: flex; flex-direction: column; gap: 12px; flex-grow: 1;}
+    .risk-card { padding: 15px 20px; background: #fff; border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; justify-content: center; }
+    .risk-card:hover { border-color: #a0aec0; }
+    .risk-card.active { border-color: #3182ce; background: #ebf8ff; box-shadow: 0 4px 12px rgba(49,130,206,0.1); }
+    .risk-title { display: flex; justify-content: space-between; align-items: center; color: #1a365d; font-size: 1.15rem; font-weight: bold; margin-bottom: 4px; }
+    .risk-title span { color: #3182ce; font-size: 1.35rem; }
+    .risk-card p { margin: 0 0 8px 0; font-size: 0.85rem; color: #718096; }
+
+    .btn-primary { background: #3182ce; color: white; padding: 15px 35px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; font-size: 1.1rem; }
+    .btn-outline { background: transparent; color: #3182ce; border: 2px solid #3182ce; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; }
+    .btn-outline.active { background: #3182ce; color: white; }
+
+    .ledger-row { display: flex; justify-content: space-between; padding: 10px 0; color: #333; font-family: monospace, 'Noto Sans TC', sans-serif; font-size: 1.15rem; letter-spacing: 0.5px;}
+    .dark-box .ledger-row { color: #cbd5e0; }
+    .ledger-divider { border-top: 2px dashed #e2e8f0; margin: 15px 0; }
+
+    /* 🔴 第 4 關核心目標圖卡 */
+    .big-goal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; margin-top: 20px;}
+    .big-goal-card { background: #fff; border: 2px solid #e2e8f0; border-radius: 20px; padding: 30px; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center;}
+    .big-goal-card.active { border-color: #3182ce; background: #ebf8ff; box-shadow: 0 4px 15px rgba(49,130,206,0.15);}
+    .goal-emoji { font-size: 3.8rem; margin-bottom: 15px; }
+    .big-goal-card h3 { font-size: 1.3rem; margin: 0; color: #1a365d;}
+
+    /* 🌟 第 6 關金融管道左圖右文 */
+    .channel-list-wrapper { width: 100%; display: flex; flex-direction: column; gap: 20px; }
+    .channel-row { display: flex; background: #fff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.03); align-items: stretch; transition: 0.3s;}
+    .channel-row:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.08); transform: translateX(5px); }
+    .highlight-row { border: 2px solid #3182ce; box-shadow: 0 8px 25px rgba(49,130,206,0.15); transform: scale(1.02); z-index: 10;}
+    .highlight-row:hover { transform: scale(1.02) translateX(5px); }
+
+    .channel-left { width: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; color: #fff; flex-shrink: 0; }
+    .c-icon { font-size: 3.5rem; margin-bottom: 10px; }
+    .c-name { font-size: 1.3rem; font-weight: bold; letter-spacing: 1px;}
+    .bank-theme { background: #a0aec0; }
+    .platform-theme { background: #ed8936; }
+    .policy-theme { background: #1a365d; }
+
+    .channel-right { padding: 25px 40px; display: flex; align-items: center; flex-grow: 1; }
+    .c-bullet-list { margin: 0; padding-left: 20px; color: #4a5568; font-size: 1.1rem; line-height: 1.8; }
+    .c-bullet-list li { margin-bottom: 10px; }
+    .c-bullet-list strong { color: #2d3748; }
+    .highlight-row .c-bullet-list strong { color: #3182ce; }
+
+    /* 🟢 第 7 關：橫條與垂直滴落線 */
+    .timeline-master-container { position: relative; width: 100%; max-width: 1000px; margin: 40px auto 20px auto; padding-top: 80px; }
+    .master-horizontal-line { position: absolute; top: 96px; left: 0; width: 100%; height: 6px; background: #cbd5e0; border-radius: 3px; z-index: 1; }
+
+    .timeline-grid { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; position: relative; z-index: 2; text-align: center; gap: 10px;}
+    .t-col { display: flex; flex-direction: column; align-items: center; }
+
+    .marker-span { font-size: 1.4rem; font-weight: 700; background: #f8f9fa; padding: 0 15px; margin-bottom: 15px; z-index: 3;}
+    .vertical-stem-line { width: 4px; height: 45px; margin-bottom: 20px; border-radius: 2px; }
+    .stem-text { font-size: 1.6rem; font-weight: 700; margin: 0; letter-spacing: 0.5px;}
+
+    .text-grow { color: #dd6b20; } .bg-grow { background: #dd6b20; }
+    .text-compound { color: #2f855a; } .bg-compound { background: #2f855a; } 
+    .text-enjoy { color: #3182ce; } .bg-enjoy { background: #3182ce; }
+
+    /* 💡 燈泡發光 */
+    .bulb-wrapper { position: absolute; top: 64px; left: 0%; transform: translateX(-50%); z-index: 10; display: flex; flex-direction: column; align-items: center; transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+    .bulb-icon { font-size: 3rem; position: relative; z-index: 4; text-shadow: 0 0 12px rgba(236,201,75,0.9); animation: bulbFloat 2s ease-in-out infinite; }
+    .bulb-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; background: radial-gradient(circle, rgba(236,201,75,0.7) 0%, rgba(236,201,75,0) 70%); z-index: 3; animation: bulbPulse 1.5s infinite alternate; }
+
+    .bulb-tooltip-box { position: absolute; bottom: 100%; margin-bottom: 12px; background: #1a365d; color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 1rem; font-weight: bold; white-space: nowrap; box-shadow: 0 10px 20px rgba(0,0,0,0.15); border: 1px solid #4a5568; animation: tooltipFloat 2s ease-in-out infinite; }
+    .bulb-tooltip-box::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border-width: 8px 8px 0; border-style: solid; border-color: #1a365d transparent transparent; display: block; width: 0; }
+
+    @keyframes bulbPulse { 0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.6; } 100% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; } }
+    @keyframes bulbFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    @keyframes tooltipFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+  </style>
+</head>
+<body>
+
+  <div class="scroll-container">
+    
+    <section id="cashflow" class="full-screen bg-light">
+      <div class="container">
+        <div class="left-panel">
+          <h2 class="section-title">1. 現金流與防護網體檢</h2>
+          <div class="input-grid">
+            <div class="input-group full-width"><label>目前年齡</label><input type="number" id="current-age" value="30" oninput="updateAllCalculations()"></div>
+            <div class="input-group full-width"><label>月收入 (元)</label><input type="number" id="val-income" value="60000" oninput="updateAllCalculations()"></div>
+            <div class="input-group"><label>必要開銷 (房租/食衣住行)</label><input type="number" id="val-living" value="20000" oninput="updateAllCalculations()"></div>
+            <div class="input-group"><label>想要開銷 (娛樂/購物)</label><input type="number" id="val-wants" value="10000" oninput="updateAllCalculations()"></div>
+            <div class="input-group"><label>儲蓄與投資 (目前每月)</label><input type="number" id="val-investing" value="10000" oninput="updateAllCalculations()"></div>
+            <div class="input-group"><label>保險負擔 (月攤提)</label><input type="number" id="val-insurance" value="2000" oninput="updateAllCalculations()"></div>
+          </div>
+          <div style="margin-top: 15px;">
+            <label>現有醫療保險涵蓋範圍 (可複選)：</label>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
+              <label><input type="checkbox" id="check-surg" onchange="updateAllCalculations()"> 住院手術</label>
+              <label><input type="checkbox" id="check-real" onchange="updateAllCalculations()"> 實支實付</label>
+              <label><input type="checkbox" id="check-ill" onchange="updateAllCalculations()"> 重大傷病</label>
+              <label style="color:#e53e3e; font-weight:bold;"><input type="checkbox" id="check-unsure" onchange="updateAllCalculations()"> 不確定/忘記了</label>
+            </div>
+          </div>
+        </div>
+        <div class="right-panel">
+          <div class="chart-container"><canvas id="pieChart"></canvas></div>
+          <div class="analysis-box" id="cashflow-analysis"></div>
+          <button class="btn-outline" onclick="scrollToSection('deposit')">下一步：檢視閒置資產</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="deposit" class="full-screen">
+      <div class="container">
+        <div class="left-panel">
+          <h2 class="section-title">2. 閒置資產與隱形耗損</h2>
+          <div class="input-grid" style="background: #f8f9fa; padding: 25px; border-radius: 8px;">
+            <div class="input-grid" style="width: 100%; gap: 15px;">
+              <div class="input-group full-width"><label>銀行定存總額 (萬)</label><input type="number" id="deposit-total" value="300" oninput="updateAllCalculations()"></div>
+              <div class="input-group" style="flex: 1;"><label>平均年利率 (%)</label><input type="number" id="deposit-rate" value="1.5" step="0.1" oninput="updateAllCalculations()"></div>
+              <div class="input-group" style="flex: 1;"><label>預估年通膨率 (%)</label><input type="number" id="inflation-rate" value="1.75" step="0.05" oninput="updateAllCalculations()"></div>
+            </div>
+          </div>
+          <div style="margin-top: 20px; font-size: 0.95rem; color: #4a5568; line-height: 1.7; background: #edf2f7; padding: 18px; border-radius: 8px; border-left: 4px solid #1a365d;">
+            <strong>💡 為什麼利息會被扣二代健保與所得稅？</strong><br>
+            依據台灣稅法與健保法令，當單筆定存的<strong>年利息收入達 20,000 元（含）以上</strong>時，銀行將依法強制執行預扣所得稅 (10%) 與二代健保補充保費 (2.11%)。
+          </div>
+        </div>
+        <div class="right-panel">
+          <div class="analysis-box dark-box" style="background: #1a365d; padding: 35px 30px;">
+            <h3 style="color:#ffffff; border-bottom: 1px solid #4a5568; padding-bottom: 12px; font-weight: bold; font-size: 1.35rem; letter-spacing: 0.5px;">📄 閒置資產效益分析</h3>
+            <div class="ledger-section">
+              <div class="ledger-row"><span>表面利息收入</span><span id="dep-interest">+ 45,000</span></div>
+            </div>
+            <div class="ledger-section" style="margin-top: 15px;">
+              <div class="ledger-row"><span>預扣所得稅 (10%)</span><span id="dep-tax">- 4,500</span></div>
+              <div class="ledger-row"><span>補充保費 (2.11%)</span><span id="dep-health">- 950</span></div>
+              <div class="ledger-row"><span>購買力通膨耗損</span><span id="dep-inflation">- 52,500</span></div>
+            </div>
+            <div class="ledger-divider"></div>
+            <div class="ledger-row" style="align-items: center;">
+              <span style="font-size:1.15rem; color: #e2e8f0; font-weight: bold;">⚠️ 每年實質購買力變化</span> 
+              <strong id="dep-real-change" style="font-size:2.3rem; color:#fc8181; font-weight: 700;">- 12,950 元</strong>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="scrollToSection('debt')">下一步：債務與稅務</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="debt" class="full-screen bg-light">
+      <div class="container">
+        <div class="left-panel">
+          <h2 class="section-title">3. 債務結構與稅務雷達</h2>
+          <div class="input-grid">
+            <div class="input-group"><label>🏠 每月房貸支出</label><input type="number" id="debt-mortgage" value="0" oninput="updateAllCalculations()"></div>
+            <div class="input-group"><label>💳 每月信貸/卡費</label><input type="number" id="debt-bad" value="0" oninput="updateAllCalculations()"></div>
+          </div>
+          <div style="margin-top: 20px; padding: 15px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;">
+            <label><input type="checkbox" id="check-mortgage-interest" onchange="updateAllCalculations()"> <strong>我目前有繳納房貸利息 (解鎖節稅)</strong></label>
+          </div>
+        </div>
+        <div class="right-panel">
+          <div class="analysis-box">
+            <h3>📊 財務生命線 (DSR)</h3>
+            <div class="health-bar-bg"><div id="dsr-health-bar" class="health-bar-fill"></div></div>
+            <div style="display:flex; justify-content:space-between; margin-top:10px;"><span id="dsr-advice"></span><strong id="dsr-display">0%</strong></div>
+          </div>
+          <div class="analysis-box dark-box" id="tax-card" style="background:#2d3748; margin-top:15px;"></div>
+          <button class="btn-primary" onclick="scrollToSection('goal-selection')">下一步：設定核心目標</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="goal-selection" class="full-screen">
+      <div class="container" style="flex-direction: column; align-items: center; text-align: center;">
+        <h2 class="section-title" style="border-bottom: none; font-size: 2.5rem;">4. 確立您的核心目標</h2>
+        <div class="big-goal-grid">
+          <div class="big-goal-card" onclick="selectBigGoal('house', this)"><div class="goal-emoji">🏡</div><h3>想買房子</h3></div>
+          <div class="big-goal-card" onclick="selectBigGoal('family', this)"><div class="goal-emoji">👶</div><h3>想成家</h3></div>
+          <div class="big-goal-card" onclick="selectBigGoal('travel', this)"><div class="goal-emoji">✈️</div><h3>想旅遊</h3></div>
+          <div class="big-goal-card" onclick="selectBigGoal('retire', this)"><div class="goal-emoji">🏖️</div><h3>想退休</h3></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="calculator" class="full-screen bg-light">
+      <div class="container" style="flex-direction: column;">
+        <h2 class="section-title">5. 達成目標的複利路徑</h2>
+        
+        <div style="display:flex; gap:10px; margin-bottom:25px;">
+          <button class="btn-outline active" id="btn-tab-regular" onclick="switchMode('regular')">定期定額 (買未來)</button>
+          <button class="btn-outline" id="btn-tab-lumpsum" onclick="switchMode('lumpsum')">單筆躉繳 (買現金流)</button>
+        </div>
+        
+        <div class="balance-grid">
+          <div class="balance-card-wrapper">
+            <div id="mode-regular" style="width:100%;">
+              <label style="display:block; margin-bottom:12px; font-size:1.1rem; color:#1a365d; font-weight:bold;">定期定額參數設定：</label>
+              <div class="balanced-input-box">
+                <div class="input-group full-width"><label>目標總金額 (萬)</label><input type="number" id="target-amt" value="1500" oninput="updateAllCalculations()"></div>
+                <div class="input-group full-width" style="margin-top:15px;"><label>預計達成年齡 (歲)</label><input type="number" id="target-age" value="55" oninput="updateAllCalculations()"></div>
+              </div>
+            </div>
+            <div id="mode-lumpsum" style="display:none; width:100%;">
+              <label style="display:block; margin-bottom:12px; font-size:1.1rem; color:#1a365d; font-weight:bold;">單筆資金參數 (配息與單位精算)：</label>
+              <div class="balanced-input-box">
+                <div class="input-group full-width" style="margin-bottom:12px;"><label>單筆投入總額 (台幣)</label><input type="number" id="lump-amt" value="3000000" oninput="updateAllCalculations()"></div>
+                <div style="display:flex; gap:15px; width:100%;">
+                  <div class="input-group" style="flex:1;"><label>當下匯率 (USD/TWD)</label><input type="number" id="lump-fx" value="32.5" step="0.1" oninput="updateAllCalculations()"></div>
+                  <div class="input-group" style="flex:1;"><label>基金當前淨值 (USD)</label><input type="number" id="lump-nav" value="15.20" step="0.01" oninput="updateAllCalculations()"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="balance-card-wrapper">
+            <label style="display:block; margin-bottom:12px; font-size:1.1rem; color:#1a365d; font-weight:bold;">請選擇或設定預估年化配息/報酬率：</label>
+            <div class="risk-grid">
+              <div class="risk-card" onclick="selectRisk(8, this)">
+                <div class="risk-title">保守型 <span>8%</span></div>
+                <p>精選全球債券組合，穩健抵禦通膨</p>
+              </div>
+              <div class="risk-card active" onclick="selectRisk(12, this)">
+                <div class="risk-title">穩健型 <span>12%</span></div>
+                <p>多元資產配置，兼顧下檔防禦與增值</p>
+              </div>
+              <div class="risk-card" onclick="selectRisk(18, this)">
+                <div class="risk-title">積極型 <span>18%</span></div>
+                <p>聚焦科技趨勢與明星台股，放大獲利槓桿</p>
+              </div>
+            </div>
+            <div class="input-group" style="margin-top: 15px; width:100%;">
+              <label>✍️ 自訂年化報酬率/配息率 (%)</label>
+              <input type="number" id="target-rate" value="12" step="0.5" oninput="updateAllCalculations(); deactivateCards();">
+            </div>
+          </div>
+        </div>
+
+        <div class="analysis-box highlight-box" id="result-regular" style="width: 100%; text-align:center; padding:35px 20px; margin-top: 30px;">
+          <h3 style="color: #4a5568;">為達成目標，您每月需投入：</h3>
+          <h1 class="highlight-text" id="req-monthly" style="font-size: 3.8rem; color: #3182ce; margin: 10px 0;">---</h1>
+        </div>
+
+        <div class="analysis-box highlight-box" id="result-lumpsum" style="width: 100%; text-align:center; padding:35px 20px; margin-top: 30px; display: none;">
+          <h3 style="color: #1a365d; font-size: 1.5rem; margin-bottom: 20px;">真實配息金流精算 <span style="font-size:1rem; color:#718096; font-weight:normal;">(已扣除單筆前收5%費用)</span></h3>
+          <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin-bottom: 25px;">
+             <div style="background:#f8f9fa; padding:20px; border-radius:12px; border:1px solid #e2e8f0; min-width: 200px;">
+               <div style="color:#718096; font-size:0.95rem; margin-bottom:5px;">實際買入單位數</div>
+               <div id="out-units" style="font-size:2rem; color:#4a5568; font-weight:bold;">---</div>
+             </div>
+             <div style="background:#f8f9fa; padding:20px; border-radius:12px; border:1px solid #e2e8f0; min-width: 200px;">
+               <div style="color:#718096; font-size:0.95rem; margin-bottom:5px;">每月預估配息 (美金)</div>
+               <div id="out-usd-div" style="font-size:2rem; color:#3182ce; font-weight:bold;">---</div>
+             </div>
+             <div style="background:#ebf8ff; padding:20px; border-radius:12px; border:2px solid #3182ce; min-width: 220px; box-shadow: 0 4px 12px rgba(49,130,206,0.15);">
+               <div style="color:#2b6cb0; font-size:1rem; font-weight:bold; margin-bottom:5px;">保單預估月領 (台幣)</div>
+               <div id="out-twd-div" style="font-size:2.5rem; color:#3182ce; font-weight:bold;">---</div>
+             </div>
+          </div>
+
+          <div style="background: #fff5f5; border: 2px dashed #e53e3e; border-radius: 12px; padding: 25px; max-width: 750px; margin: 20px auto 0 auto; text-align: left;">
+            <h4 style="color:#c53030; margin:0 0 12px 0; font-size:1.2rem; display:flex; justify-content:space-between; align-items:center;">
+              <span>⚠️ 若改在自行購買相同配息標的 (如高股息ETF)</span>
+              <span style="background:#e53e3e; color:#fff; font-size:0.75rem; padding:3px 8px; border-radius:4px;">隱形失血雷達</span>
+            </h4>
+            <div class="ledger-row" style="color:#4a5568; font-size:1rem; padding:6px 0;"><span>二代健保補充保費 (單筆大於2000強制抽2.11%)</span><strong id="tax-lump-health" style="color:#e53e3e;">--</strong></div>
+            <div class="ledger-row" style="color:#4a5568; font-size:1rem; padding:6px 0;"><span>綜合所得稅耗損 (依最低階5%薪資合併課稅預估)</span><strong id="tax-lump-income" style="color:#e53e3e;">--</strong></div>
+            <div style="border-top:1px solid #fed7d7; margin:10px 0;"></div>
+            <div class="ledger-row" style="color:#2d3748; font-size:1.25rem; font-weight:bold;">
+              <span>每年無形被扒皮總金額：</span>
+              <span id="tax-lump-total" style="color:#e53e3e; font-size:1.4rem;">--</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center; width: 100%; margin-top: 30px;">
+          <button class="btn-primary" onclick="scrollToSection('channel-comparison')">下一步：金融管道機制成本分析</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="channel-comparison" class="full-screen">
+      <div class="container" style="flex-direction: column; align-items: center; max-width: 1000px;">
+        <h2 class="section-title" style="border-bottom: none; margin-bottom: 40px;">6. 金融管道機制與隱藏成本分析</h2>
+        
+        <div class="channel-list-wrapper">
+          <div class="channel-row">
+            <div class="channel-left bank-theme">
+              <div class="c-icon">🏦</div>
+              <div class="c-name">傳統銀行</div>
+            </div>
+            <div class="channel-right">
+              <ul class="c-bullet-list">
+                <li>收取申購<strong>手續費</strong>、<strong>轉換費</strong></li>
+                <li>每年無限遞增的<strong>信託管理費</strong>，等同於懲罰長期持有</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="channel-row">
+            <div class="channel-left platform-theme">
+              <div class="c-icon">💻</div>
+              <div class="c-name">網路平台</div>
+            </div>
+            <div class="channel-right">
+              <ul class="c-bullet-list">
+                <li>隱含費用容易<strong>被吃掉基金淨值</strong></li>
+                <li>缺乏紀律，<strong>無法有約束效果</strong>，震盪易追高殺低</li>
+                <li>國內標的配息必定有納入綜所稅的<strong>稅務問題</strong></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="channel-row highlight-row">
+            <div class="channel-left policy-theme">
+              <div class="c-icon">🛡️</div>
+              <div class="c-name">保險公司</div>
+            </div>
+            <div class="channel-right">
+              <ul class="c-bullet-list">
+                <li>透明買斷的<strong>前收費用機制</strong></li>
+                <li>投資收益（資產撥回）<strong>不含在個人所得稅內</strong></li>
+                <li>帳戶內含有每年<strong>免費轉換次數</strong></li>
+                <li>強迫紀律，並具有<strong>強力儲蓄與防護功能</strong></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div style="text-align: center; width: 100%; margin-top: 40px;">
+          <button class="btn-primary" onclick="scrollToSection('timeline-section')">最後一步：解鎖您的人生黃金進度</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="timeline-section" class="full-screen bg-light">
+      <div class="container" style="flex-direction: column; align-items: center;">
+        <h2 class="section-title" style="border-bottom: none; margin-bottom: 20px; font-size: 2.3rem; text-align:center;">⌛ 您的生命進度與黃金資產期</h2>
+        <p style="color:#718096; margin-bottom: 50px; text-align:center; font-size:1.05rem;">時間在無聲倒數，亮起的燈泡即是您此時此刻在生命長河中的真實位階。</p>
+        
+        <div class="timeline-master-container">
+          
+          <div class="master-horizontal-line"></div>
+          
+          <div id="live-bulb" class="bulb-wrapper">
+            <div id="bulb-tooltip" class="bulb-tooltip-box">您目前在這裡！</div>
+            <div class="bulb-glow"></div>
+            <div class="bulb-icon">💡</div>
+          </div>
+
+          <div class="timeline-grid">
+            <div class="t-col">
+              <div class="marker-span text-grow">25 - 45 歲</div>
+              <div class="vertical-stem-line bg-grow"></div>
+              <h1 class="stem-text text-grow">專注於事業成長</h1>
+            </div>
+            
+            <div class="t-col">
+              <div class="marker-span text-compound">45 - 60 歲</div>
+              <div class="vertical-stem-line bg-compound"></div>
+              <h1 class="stem-text text-compound">開始放大資產的效果</h1>
+            </div>
+            
+            <div class="t-col">
+              <div class="marker-span text-enjoy">60 歲之後</div>
+              <div class="vertical-stem-line bg-enjoy"></div>
+              <h1 class="stem-text text-enjoy">開始好好享受退休生活</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    Chart.register(ChartDataLabels);
+    let pieChartInstance = null;
+    let currentMode = 'regular'; 
+
+    function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
+    function getVal(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+    function updateAllCalculations() {
+      updateCashflow();
+      updateDeposit();
+      calculateMode();
+      updateTimelineBulb(); 
+    }
+
+    function updateCashflow() {
+      const inc = getVal('val-income'), liv = getVal('val-living'), wnt = getVal('val-wants'), inv = getVal('val-investing'), ins = getVal('val-insurance');
+      const bal = inc - (liv+wnt+inv+ins);
+      const unsure = document.getElementById('check-unsure')?.checked;
+      
+      let html = `
+        <div style="background:#ebf8ff; border: 1px solid #bee3f8; padding:8px 12px; border-radius:6px; margin-bottom:10px; text-align:center;">
+          <span style="font-size:0.85rem; color:#2b6cb0; font-weight:bold;">💵 每月未分配閒置資金：</span>
+          <strong style="font-size:1.5rem; color:${bal >= 0 ? '#3182ce' : '#e53e3e'};">${bal.toLocaleString()} 元</strong>
+        </div>
+      `;
+      if (wnt > inc * 0.2) html += `<p style="color:#dd6b20; font-size:0.85rem; margin:2px 0;">⚠️ 想要開銷偏高，侵蝕未來資產。</p>`;
+      if (unsure) html += `<div style="background:#fff5f5; border-left:3px solid #e53e3e; padding:6px; margin-top:5px; font-size:0.85rem;"><strong>🚨 警告：</strong>保障缺口不明，建議先執行保單健診。</div>`;
+
+      document.getElementById('cashflow-analysis').innerHTML = html;
+
+      const chartLabels = ['必要', '想要', '儲蓄', '保險'];
+      const chartData = [liv, wnt, inv, ins];
+      const chartColors = ['#ecc94b', '#ed8936', '#4299e1', '#48bb78'];
+      
+      if (bal > 0) {
+          chartLabels.push('未分配閒置資金');
+          chartData.push(bal);
+          chartColors.push('#e53e3e');
+      }
+
+      const ctx = document.getElementById('pieChart').getContext('2d');
+      if(pieChartInstance) pieChartInstance.destroy();
+      pieChartInstance = new Chart(ctx, {
+          type: 'doughnut',
+          data: { labels: chartLabels, datasets: [{ data: chartData, backgroundColor: chartColors, borderWidth: 2, borderColor: '#ffffff' }] },
+          options: { responsive: true, maintainAspectRatio: false, layout: { padding: 25 }, plugins: { legend: {display: false}, datalabels: { color: '#fff', font: { weight: 'bold', size: 14 }, formatter: (val, ctx) => val > 0 ? ctx.chart.data.labels[ctx.dataIndex] + '\n' + Math.round(val/inc*100) + '%' : '' } } }
+      });
+    }
+
+    function updateDeposit() {
+      const total = getVal('deposit-total')*10000, r = getVal('deposit-rate')/100, inf = getVal('inflation-rate')/100;
+      const interest = Math.round(total*r);
+      const tax = interest >= 20000 ? Math.round(interest*0.10) : 0;
+      const health = interest >= 20000 ? Math.round(interest*0.0211) : 0;
+      const loss = Math.round(total*inf);
+      const real = interest - tax - health - loss;
+
+      document.getElementById('dep-interest').innerText = `+ ${interest.toLocaleString()}`;
+      document.getElementById('dep-tax').innerText = `- ${tax.toLocaleString()}`;
+      document.getElementById('dep-health').innerText = `- ${health.toLocaleString()}`;
+      document.getElementById('dep-inflation').innerText = `- ${loss.toLocaleString()}`;
+      document.getElementById('dep-real-change').innerText = `${real.toLocaleString()} 元`;
+      document.getElementById('dep-real-change').style.color = real < 0 ? '#fc8181' : '#68d391';
+      updateDebtAndTax();
+    }
+
+    function updateDebtAndTax() {
+      const inc = getVal('val-income'), m = getVal('debt-mortgage'), b = getVal('debt-bad');
+      const dsr = inc > 0 ? ((m+b)/inc)*100 : 0;
+      
+      document.getElementById('dsr-display').innerText = dsr.toFixed(1) + '%';
+      document.getElementById('dsr-health-bar').style.width = Math.min(dsr, 100) + '%';
+      document.getElementById('dsr-health-bar').style.backgroundColor = dsr > 40 ? '#e53e3e' : dsr > 30 ? '#ed8936' : '#48bb78';
+      
+      const y = inc * 12, rate = y > 1200000 ? 12 : 5;
+      const hasM = document.getElementById('check-mortgage-interest').checked;
+      document.getElementById('tax-card').innerHTML = `<h3>⚖️ 稅務雷達</h3><p>年收預估：${y.toLocaleString()} | 稅率：${rate}%</p>${hasM ? `<p style="color:#fbd38d;">💡 已啟動 24,000 元節稅方案</p>` : ''}`;
+    }
+
+    function selectBigGoal(type, el) {
+      currentMode = 'regular'; 
+      document.getElementById('btn-tab-regular').click();
+      document.querySelectorAll('.big-goal-card').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      const presets = { house: [300, 40], family: [100, 35], travel: [50, 33], retire: [1500, 55] };
+      document.getElementById('target-amt').value = presets[type][0];
+      document.getElementById('target-age').value = presets[type][1];
+      updateAllCalculations();
+      setTimeout(() => scrollToSection('calculator'), 500);
+    }
+
+    function switchMode(mode) {
+      currentMode = mode;
+      document.getElementById('mode-regular').style.display = mode === 'regular' ? 'block' : 'none';
+      document.getElementById('mode-lumpsum').style.display = mode === 'lumpsum' ? 'block' : 'none';
+      document.getElementById('result-regular').style.display = mode === 'regular' ? 'block' : 'none';
+      document.getElementById('result-lumpsum').style.display = mode === 'lumpsum' ? 'block' : 'none';
+      document.getElementById('btn-tab-regular').className = mode === 'regular' ? 'btn-outline active' : 'btn-outline';
+      document.getElementById('btn-tab-lumpsum').className = mode === 'lumpsum' ? 'btn-outline active' : 'btn-outline';
+      updateAllCalculations();
+    }
+
+    function selectRisk(rate, el) {
+      document.querySelectorAll('.risk-card').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('target-rate').value = rate;
+      updateAllCalculations();
+    }
+
+    function deactivateCards() { document.querySelectorAll('.risk-card').forEach(c => c.classList.remove('active')); }
+
+    function calculateMode() {
+      if (currentMode === 'regular') calculateRegular();
+      else calculateLumpSum();
+    }
+
+    function calculateRegular() {
+      const age = getVal('current-age'), targetAge = getVal('target-age');
+      const years = Math.max(1, targetAge - age);
+      const fv = getVal('target-amt')*10000;
+      const rate = parseFloat(document.getElementById('target-rate').value) || 0;
+      const r = (rate/100)/12, n = years * 12;
+      const pmt = r > 0 ? (fv * r) / (Math.pow(1+r, n) - 1) : fv / n;
+      document.getElementById('req-monthly').innerText = Math.round(pmt).toLocaleString() + ' 元';
+    }
+
+    function calculateLumpSum() {
+      const grossTwd = getVal('lump-amt');
+      const feeRate = 0.05; 
+      const fx = getVal('lump-fx');
+      const nav = getVal('lump-nav');
+      const divRate = parseFloat(document.getElementById('target-rate').value) || 0;
+      
+      if(fx <= 0 || nav <= 0) return;
+      
+      const netTwd = grossTwd * (1 - feeRate);
+      const netUsd = netTwd / fx;
+      const units = netUsd / nav;
+      
+      const usdDiv = netUsd * (divRate / 100) / 12;
+      const twdDiv = usdDiv * fx;
+      
+      const rawAnnualDiv = grossTwd * (divRate / 100); 
+      const rawMonthlyDiv = rawAnnualDiv / 12;
+      
+      let annualHealthTax = 0;
+      let annualIncomeTax = 0;
+      if (rawMonthlyDiv >= 2000) {
+          annualHealthTax = Math.round(rawAnnualDiv * 0.0211);
+          annualIncomeTax = Math.round(rawAnnualDiv * 0.05);
+      }
+      const annualLossTotal = annualHealthTax + annualIncomeTax;
+
+      document.getElementById('out-units').innerText = units.toLocaleString(undefined, {maximumFractionDigits: 2});
+      document.getElementById('out-usd-div').innerText = '$ ' + usdDiv.toLocaleString(undefined, {maximumFractionDigits: 2});
+      document.getElementById('out-twd-div').innerText = '$ ' + Math.round(twdDiv).toLocaleString();
+      
+      document.getElementById('tax-lump-health').innerText = rawMonthlyDiv >= 2000 ? `- ${annualHealthTax.toLocaleString()} 元 / 年` : '0 元 (單次未達2000起扣點)';
+      document.getElementById('tax-lump-income').innerText = rawMonthlyDiv >= 2000 ? `- ${annualIncomeTax.toLocaleString()} 元 / 年` : '0 元';
+      document.getElementById('tax-lump-total').innerText = `- ${annualLossTotal.toLocaleString()} 元`;
+    }
+
+    function updateTimelineBulb() {
+      const age = Math.min(Math.max(15, getVal('current-age')), 80); 
+      const bulb = document.getElementById('live-bulb');
+      const tooltip = document.getElementById('bulb-tooltip');
+      
+      let percent = 5;
+      if (age <= 25) {
+          percent = 10; 
+      } else if (age <= 45) {
+          percent = 16.6 + ((age - 25) / 20) * 33.3; 
+      } else if (age <= 60) {
+          percent = 50 + ((age - 45) / 15) * 33.3; 
+      } else {
+          percent = 83.3 + ((age - 60) / 20) * 15; 
+      }
+      percent = Math.min(Math.max(2, percent), 98); 
+      bulb.style.left = percent + '%';
+      
+      if (age < 45) {
+          const countdown = 45 - age;
+          tooltip.innerHTML = `💡 您目前 <strong>${age} 歲</strong>！距離「事業成長期」結束，只剩下最後 <strong>${countdown} 年</strong>黃金衝刺期！`;
+      } else if (age <= 60) {
+          const countdown = 60 - age;
+          tooltip.innerHTML = `💡 您目前 <strong>${age} 歲</strong>！正處於資產放大複利期，距離黃金享受期還剩 <strong>${countdown} 年</strong>！`;
+      } else {
+          tooltip.innerHTML = `💡 您目前 <strong>${age} 歲</strong>！已進入好好享受退休生活階段，啟動自動導航機制！`;
+      }
+    }
+
+    window.onload = () => { setTimeout(() => { updateAllCalculations(); }, 300); };
+  </script>
+</body>
+</html>
+
+```
